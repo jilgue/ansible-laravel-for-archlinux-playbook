@@ -1,0 +1,38 @@
+---
+- name: Install Laravel's depedences
+  hosts: localhost
+  become: true
+  become_method: sudo
+
+  vars:
+    packages:
+      - composer
+      - php
+      - php-sqlite
+      - sqlite
+    extensions_php_ini:
+      - "extension=bcmath"
+
+    external_extensions:
+      - pdo_sqlite
+      - sqlite3
+
+  tasks:
+    - name: Install
+      pacman:
+        name: "{{ item }}"
+      loop: "{{ packages }}"
+
+    - name: Configure php ini
+      lineinfile:
+        path: /etc/php/php.ini
+        regexp: "^;?{{ item }}$"
+        line: "{{ item }}"
+      loop: "{{ extensions_php_ini }}"
+
+    - name: Configure extensions
+      lineinfile:
+        path: "/etc/php/conf.d/50-{{ item }}.ini"
+        line: "extension={{ item }}"
+        create: true
+      loop: "{{ external_extensions }}"
