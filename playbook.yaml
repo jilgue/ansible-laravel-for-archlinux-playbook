@@ -1,5 +1,5 @@
 ---
-- name: Install Laravel's depedences
+- name: "Install Laravel's depedences"
   hosts: localhost
   become: true
   become_method: sudo
@@ -10,6 +10,9 @@
       - php
       - php-sqlite
       - sqlite
+      - npm
+      - yarn
+
     extensions_php_ini:
       - "extension=bcmath"
 
@@ -20,8 +23,7 @@
   tasks:
     - name: Install
       pacman:
-        name: "{{ item }}"
-      loop: "{{ packages }}"
+        name: "{{ packages }}"
 
     - name: Configure php ini
       lineinfile:
